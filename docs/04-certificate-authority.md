@@ -33,6 +33,11 @@ ca.crt
 ca.key
 ```
 
+check certificate details
+```bash
+openssl x509 -text -noout -in ca.crt
+```
+
 Reference : https://kubernetes.io/docs/concepts/cluster-administration/certificates/#openssl
 
 The ca.crt is the Kubernetes Certificate Authority certificate and ca.key is the Kubernetes Certificate Authority private key.
