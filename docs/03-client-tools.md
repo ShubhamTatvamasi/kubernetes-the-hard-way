@@ -7,22 +7,22 @@ If you are on a Linux laptop, then your laptop could be this system. In my case 
 ## Access all VMs
 
 Generate Key Pair on master-1 node
-`$ssh-keygen`
+`ssh-keygen -t ed25519`
 
 Leave all settings to default.
 
 View the generated public key ID at:
 
-```
-$cat .ssh/id_rsa.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
+```bash
+cat .ssh/id_ed25519.pub
+ssh-ed25519 AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
 ```
 
 Move public key of master to all other VMs
 
-```
-$cat >> ~/.ssh/authorized_keys <<EOF
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
+```bash
+cat >> ~/.ssh/authorized_keys <<EOF
+ssh-ed25519 AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
 EOF
 ```
 
@@ -35,30 +35,30 @@ Reference: [https://kubernetes.io/docs/tasks/tools/install-kubectl/](https://kub
 
 ### Linux
 
-```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.13.0/bin/linux/amd64/kubectl
+```bash
+wget https://storage.googleapis.com/kubernetes-release/release/v1.17.3/bin/linux/amd64/kubectl
 ```
 
-```
+```bash
 chmod +x kubectl
 ```
 
-```
+```bash
 sudo mv kubectl /usr/local/bin/
 ```
 
 ### Verification
 
-Verify `kubectl` version 1.13.0 or higher is installed:
+Verify `kubectl` version 1.17.3 or higher is installed:
 
-```
+```bash
 kubectl version --client
 ```
 
 > output
 
 ```
-Client Version: version.Info{Major:"1", Minor:"13", GitVersion:"v1.13.0", GitCommit:"ddf47ac13c1a9483ea035a79cd7c10005ff21a6d", GitTreeState:"clean", BuildDate:"2018-12-03T21:04:45Z", GoVersion:"go1.11.2", Compiler:"gc", Platform:"linux/amd64"}
+Client Version: version.Info{Major:"1", Minor:"17", GitVersion:"v1.17.3", GitCommit:"06ad960bfd03b39c8310aaf92d1e7c12ce618213", GitTreeState:"clean", BuildDate:"2020-02-11T18:14:22Z", GoVersion:"go1.13.6", Compiler:"gc", Platform:"linux/amd64"}
 ```
 
 Next: [Certificate Authority](04-certificate-authority.md)
