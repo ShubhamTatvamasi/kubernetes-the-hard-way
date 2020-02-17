@@ -78,8 +78,8 @@ For now let's just focus on the control plane components.
 
 Generate the `kube-controller-manager` client certificate and private key:
 
-```
-openssl genrsa -out kube-controller-manager.key 2048
+```bash
+openssl -algorithm ED25519 > kube-controller-manager.key
 openssl req -new -key kube-controller-manager.key -subj "/CN=system:kube-controller-manager" -out kube-controller-manager.csr
 openssl x509 -req -in kube-controller-manager.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out kube-controller-manager.crt -days 1000
 ```
