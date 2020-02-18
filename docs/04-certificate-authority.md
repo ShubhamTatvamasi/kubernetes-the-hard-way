@@ -16,26 +16,21 @@ In this section you will provision a Certificate Authority that can be used to g
 Create a CA certificate, then generate a Certificate Signing Request and use it to create a private key:
 
 
-```bash
+```
 # Create private key for CA
-openssl genpkey -algorithm ED25519 > ca.key
+openssl genrsa -out ca.key 2048
 
 # Create CSR using the private key
 openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 
 # Self sign the csr using its own private key
-openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000
+openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial  -out ca.crt -days 1000
 ```
 Results:
 
 ```
 ca.crt
 ca.key
-```
-
-check certificate details
-```bash
-openssl x509 -text -noout -in ca.crt
 ```
 
 Reference : https://kubernetes.io/docs/concepts/cluster-administration/certificates/#openssl
@@ -52,9 +47,9 @@ In this section you will generate client and server certificates for each Kubern
 
 Generate the `admin` client certificate and private key:
 
-```bash
+```
 # Generate private key for admin user
-openssl genpkey -algorithm ED25519 > admin.key
+openssl genrsa -out admin.key 2048
 
 # Generate CSR for admin user. Note the OU.
 openssl req -new -key admin.key -subj "/CN=admin/O=system:masters" -out admin.csr
@@ -83,8 +78,8 @@ For now let's just focus on the control plane components.
 
 Generate the `kube-controller-manager` client certificate and private key:
 
-```bash
-openssl genpkey -algorithm ED25519 > kube-controller-manager.key
+```
+openssl genrsa -out kube-controller-manager.key 2048
 openssl req -new -key kube-controller-manager.key -subj "/CN=system:kube-controller-manager" -out kube-controller-manager.csr
 openssl x509 -req -in kube-controller-manager.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out kube-controller-manager.crt -days 1000
 ```
@@ -102,8 +97,8 @@ kube-controller-manager.crt
 Generate the `kube-proxy` client certificate and private key:
 
 
-```bash
-openssl genpkey -algorithm ED25519 > kube-proxy.key
+```
+openssl genrsa -out kube-proxy.key 2048
 openssl req -new -key kube-proxy.key -subj "/CN=system:kube-proxy" -out kube-proxy.csr
 openssl x509 -req -in kube-proxy.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out kube-proxy.crt -days 1000
 ```
@@ -121,8 +116,8 @@ Generate the `kube-scheduler` client certificate and private key:
 
 
 
-```bash
-openssl genpkey -algorithm ED25519 > kube-scheduler.key
+```
+openssl genrsa -out kube-scheduler.key 2048
 openssl req -new -key kube-scheduler.key -subj "/CN=system:kube-scheduler" -out kube-scheduler.csr
 openssl x509 -req -in kube-scheduler.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out kube-scheduler.crt -days 1000
 ```
@@ -140,7 +135,7 @@ The kube-apiserver certificate requires all names that various components may re
 
 The `openssl` command cannot take alternate names as command line parameter. So we must create a `conf` file for it:
 
-```bash
+```
 cat > openssl.cnf <<EOF
 [req]
 req_extensions = v3_req
@@ -165,8 +160,8 @@ EOF
 
 Generates certs for kube-apiserver
 
-```bash
-openssl genpkey -algorithm ED25519 > kube-apiserver.key
+```
+openssl genrsa -out kube-apiserver.key 2048
 openssl req -new -key kube-apiserver.key -subj "/CN=kube-apiserver" -out kube-apiserver.csr -config openssl.cnf
 openssl x509 -req -in kube-apiserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out kube-apiserver.crt -extensions v3_req -extfile openssl.cnf -days 1000
 ```
@@ -184,7 +179,7 @@ Similarly ETCD server certificate must have addresses of all the servers part of
 
 The `openssl` command cannot take alternate names as command line parameter. So we must create a `conf` file for it:
 
-```bash
+```
 cat > openssl-etcd.cnf <<EOF
 [req]
 req_extensions = v3_req
@@ -203,8 +198,8 @@ EOF
 
 Generates certs for ETCD
 
-```bash
-openssl genpkey -algorithm ED25519 > etcd-server.key
+```
+openssl genrsa -out etcd-server.key 2048
 openssl req -new -key etcd-server.key -subj "/CN=etcd-server" -out etcd-server.csr -config openssl-etcd.cnf
 openssl x509 -req -in etcd-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out etcd-server.crt -extensions v3_req -extfile openssl-etcd.cnf -days 1000
 ```
@@ -222,8 +217,8 @@ The Kubernetes Controller Manager leverages a key pair to generate and sign serv
 
 Generate the `service-account` certificate and private key:
 
-```bash
-openssl genpkey -algorithm ED25519 > service-account.key
+```
+openssl genrsa -out service-account.key 2048
 openssl req -new -key service-account.key -subj "/CN=service-accounts" -out service-account.csr
 openssl x509 -req -in service-account.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out service-account.crt -days 1000
 ```
@@ -240,7 +235,7 @@ service-account.crt
 
 Copy the appropriate certificates and private keys to each controller instance:
 
-```bash
+```
 for instance in master-1 master-2; do
   scp ca.crt ca.key kube-apiserver.key kube-apiserver.crt \
     service-account.key service-account.crt \
